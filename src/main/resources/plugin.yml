@@ -1,4 +1,18 @@
-name: Enhanced Tools
+name: EnhancedTools
 version: '0.1'
 main: me.swishhyy.enhancedtools.EnhancedTools
 api-version: '1.20'
+Commands:
+  upgrade:
+    description: "Allows the Player to upgrade their tool via currency"
+    usage: "/upgrade "
+    aliases: [upg]
+    permission: enhancedtools.command.upgrade
+    permission-message: "You do no have permission to use this command."
+
+    reload:
+      description: "Allows Admins to reload the plugin in game."
+      usage: "/enhancedtools [reload] "
+      aliases: []
+      permission: enhancedtools.command.reload
+      permission-message: "You do no have permission to use this command."
