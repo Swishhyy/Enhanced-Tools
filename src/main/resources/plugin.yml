@@ -1,0 +1,4 @@
+name: Enhanced Tools
+version: '0.1'
+main: me.swishhyy.enhancedtools.EnhancedTools
+api-version: '1.20'
