@@ -1,6 +1,7 @@
 package me.swishhyy.enhancedtools.commands;
 
 import me.swishhyy.enhancedtools.EnhancedTools;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
@@ -20,7 +21,6 @@ import java.util.List;
 
 public class UpgradeCommand implements CommandExecutor, TabExecutor {
 
-    // Reference to your main plugin so we can call plugin.getConfig()
     private final EnhancedTools plugin;
 
     public UpgradeCommand(EnhancedTools plugin) {
@@ -33,121 +33,113 @@ public class UpgradeCommand implements CommandExecutor, TabExecutor {
                              @NotNull String label,
                              @NotNull String[] args) {
 
-        // 1) Only players
         if (!(sender instanceof Player player)) {
-            sender.sendMessage("Only players can use this command!");
+            sender.sendMessage(plugin.getMessage("only-players", "Only players can use this command!"));
             return true;
         }
 
-        // 2) Item check
         ItemStack itemInHand = player.getInventory().getItemInMainHand();
         if (itemInHand.getType() == Material.AIR) {
-            player.sendMessage("You're not holding any item to upgrade!");
+            player.sendMessage(plugin.getMessage("holding-air", "You're not holding an item to upgrade!"));
             return true;
         }
 
-        // 3) Require 2 arguments: /upgrade <enchant> <level>
         if (args.length < 2) {
-            player.sendMessage("Usage: /upgrade <enchant> <level>");
+            player.sendMessage(plugin.getMessage("invalid-usage", "Usage: /upgrade <enchant> <level>"));
             return true;
         }
+
         String enchantName = args[0].toLowerCase();
         String levelString = args[1];
 
-        // 4) Parse desired level
         int level;
         try {
             level = Integer.parseInt(levelString);
         } catch (NumberFormatException e) {
-            player.sendMessage("Invalid level! Must be a number.");
+            player.sendMessage(plugin.getMessage("invalid-level", "Invalid level! Must be a number."));
             return true;
         }
 
-        // 5) Convert user-friendly name -> Bukkit Enchantment
         Enchantment enchantment = matchCustomEnchant(enchantName);
         if (enchantment == null) {
-            player.sendMessage("Unknown enchantment: " + enchantName);
+            player.sendMessage(plugin.getMessage("unknown-enchantment", "Unknown enchantment: {enchant}")
+                    .replace("{enchant}", enchantName));
             return true;
         }
 
-        // 6) Check if enchant is compatible with the item
         if (!enchantment.canEnchantItem(itemInHand)) {
-            player.sendMessage("You cannot apply " + enchantName + " to " + itemInHand.getType() + "!");
+            player.sendMessage(plugin.getMessage("cannot-apply", "{enchant} cannot be applied to {item}")
+                    .replace("{enchant}", enchantName)
+                    .replace("{item}", itemInHand.getType().toString()));
             return true;
         }
 
-        // 7) Load config data for this enchant: max-level, cost, cost-scale
         ConfigurationSection enchantsSection = plugin.getConfig().getConfigurationSection("enchants");
         if (enchantsSection == null) {
-            player.sendMessage("The config is missing an 'enchants' section!");
+            player.sendMessage(plugin.getMessage("missing-enchants-section", "Configuration error: Missing 'enchants' section."));
             return true;
         }
 
-        // Each enchant in config is stored by its key, e.g. "sharpness", "efficiency"
         if (!enchantsSection.contains(enchantName)) {
-            player.sendMessage("Config doesn't have settings for " + enchantName + "!");
+            player.sendMessage(plugin.getMessage("missing-enchant-config", "No configuration found for enchantment {enchant}.")
+                    .replace("{enchant}", enchantName));
             return true;
         }
 
         ConfigurationSection enchantConfig = enchantsSection.getConfigurationSection(enchantName);
-        // Check if the configuration section exists
-        if (enchantConfig == null) {
-            player.sendMessage("The configuration for " + enchantName + " is invalid or missing!");
-            return true; // Exit the command if the section is null
-        }
-        int maxLevel = enchantConfig.getInt("max-level", 5);         // default 5 if not in config
-        double baseCost = enchantConfig.getDouble("base-cost", 5.0); // default 5.0
-        double costScale = enchantConfig.getDouble("cost-scale", 1.0);
-
-        // Enforce max-level
-        if (level > maxLevel) {
-            player.sendMessage("That enchantment is capped at level " + maxLevel + "!");
+        if (enchantConfig == null || !enchantConfig.getBoolean("enabled", true)) {
+            player.sendMessage(plugin.getMessage("not-enabled", "{enchant} is not enabled or cannot be upgraded!")
+                    .replace("{enchant}", enchantName));
             return true;
         }
 
-        // 8) Calculate cost
-        // Example formula: cost = baseCost * (costScale^(level - 1))
-        double finalCost = baseCost * Math.pow(costScale, (level - 1));
-
-        // 9) Check if we use Vault or XP, then subtract cost
-        boolean useVault = plugin.getConfig().getBoolean("use-vault", false);
-        if (useVault) {
-            // PSEUDO-CODE: If you have an economy reference from Vault:
-            //    if (economy.getBalance(player) < finalCost) {
-            //        player.sendMessage("You don't have enough money!");
-            //        return true;
-            //    }
-            //    economy.withdrawPlayer(player, finalCost);
-            // For now, let's just pretend we do it:
-            player.sendMessage("Cost " + finalCost + " currency (Vault) - pseudo-charged!");
-        } else {
-            // XP approach. This is one possibility:
-            // 1) check if player's current level >= finalCost
-            //    if not, "Not enough XP!"
-            // 2) subtract from player's XP levels:
-            if (player.getLevel() < finalCost) {
-                player.sendMessage("You don't have enough XP levels!");
-                return true;
-            }
-            // Downcast if finalCost is float/double. Usually you'd do an int cost or rework the formula.
-            player.setLevel((int) (player.getLevel() - finalCost));
-            player.sendMessage("Cost " + finalCost + " XP levels - subtracted!");
+        if (!enchantConfig.contains("levels")) {
+            player.sendMessage(plugin.getMessage("missing-upgrade-levels", "{enchant} has no upgrade levels defined.")
+                    .replace("{enchant}", enchantName));
+            return true;
         }
 
-        // 10) Apply the enchant ignoring vanilla level limits
+        ConfigurationSection levelConfig = enchantConfig.getConfigurationSection("levels." + level);
+        if (levelConfig == null) {
+            player.sendMessage(plugin.getMessage("invalid-upgrade-level", "Invalid level {level} for enchantment {enchant}.")
+                    .replace("{level}", String.valueOf(level))
+                    .replace("{enchant}", enchantName));
+            return true;
+        }
+
+        int xpCost = levelConfig.getInt("xp-cost");
+        double currencyCost = levelConfig.getDouble("currency-cost");
+
+        boolean useVault = plugin.getConfig().getBoolean("use-vault", false);
+        if (useVault) {
+            Economy economy = plugin.getEconomy();
+            if (economy.getBalance(player) < currencyCost) {
+                player.sendMessage(plugin.getMessage("not-enough-currency", "You do not have enough currency ({cost}) for this upgrade.")
+                        .replace("{cost}", String.valueOf(currencyCost)));
+                return true;
+            }
+
+            economy.withdrawPlayer(player, currencyCost);
+            player.sendMessage(plugin.getMessage("currency-deducted", "Deducted {cost} currency from your balance.")
+                    .replace("{cost}", String.valueOf(currencyCost)));
+        } else {
+            if (player.getLevel() < xpCost) {
+                player.sendMessage(plugin.getMessage("not-enough-xp", "You do not have enough XP levels ({cost}).")
+                        .replace("{cost}", String.valueOf(xpCost)));
+                return true;
+            }
+            player.setLevel(player.getLevel() - xpCost);
+            player.sendMessage(plugin.getMessage("xp-deducted", "Deducted {cost} XP levels.")
+                    .replace("{cost}", String.valueOf(xpCost)));
+        }
+
         ItemMeta meta = itemInHand.getItemMeta();
         meta.addEnchant(enchantment, level, true);
         itemInHand.setItemMeta(meta);
 
-        // 11) Play a sound and notify
         player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_USE, 1.0f, 1.0f);
-        // Optionally use a message from config with placeholders:
-        String successMsg = plugin.getConfig().getString("messages.upgrade-success",
-                "Your item was upgraded to {ENCHANT} {LEVEL}!");
-        successMsg = successMsg
-                .replace("{ENCHANT}", enchantName)
-                .replace("{LEVEL}", String.valueOf(level));
-        player.sendMessage(successMsg);
+        String successMsg = plugin.getMessage("upgrade-success", "Your item has been upgraded to {enchant} {level}!");
+        player.sendMessage(successMsg.replace("{enchant}", enchantName).replace("{level}", String.valueOf(level)));
 
         return true;
     }
