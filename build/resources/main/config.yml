@@ -1,0 +1,185 @@
+# -------------------------------------------------------------------
+# EnhancedTools Config
+# -------------------------------------------------------------------
+# If true, your plugin will attempt to use Vault-based economy
+# (i.e., currency) for upgrades. If false, you might use XP instead.
+use-vault: false
+
+# If true, print extra debug/logging info in the console
+enable-logging: true
+
+# Per-enchantment configuration
+#  - max-level  = The maximum level you will allow (ignoring vanilla caps)
+#  - base-cost  = The starting cost for upgrading to level 1 (or each increment)
+#  - cost-scale = A multiplier applied to the cost for higher levels.
+#                 If cost-scale = 1.2, level 2 upgrade might cost baseCost * 1.2,
+enchants:
+  # Armor Protections
+  protection:
+    max-level: 10
+    base-cost: 2.0
+    cost-scale: 1.10
+  fire_protection:
+    max-level: 10
+    base-cost: 2.5
+    cost-scale: 1.10
+  feather_falling:
+    max-level: 10
+    base-cost: 3.0
+    cost-scale: 1.15
+  blast_protection:
+    max-level: 10
+    base-cost: 2.5
+    cost-scale: 1.10
+  projectile_protection:
+    max-level: 10
+    base-cost: 2.0
+    cost-scale: 1.10
+  # Armor/Helmet
+  respiration:
+    max-level: 5
+    base-cost: 3.0
+    cost-scale: 1.20
+  aqua_affinity:
+    max-level: 5
+    base-cost: 2.0
+    cost-scale: 1.10
+  thorns:
+    max-level: 7
+    base-cost: 4.0
+    cost-scale: 1.25
+  depth_strider:
+    max-level: 5
+    base-cost: 3.0
+    cost-scale: 1.15
+  frost_walker:
+    max-level: 5
+    base-cost: 3.0
+    cost-scale: 1.15
+  binding_curse:
+    max-level: 1
+    base-cost: 1.0
+    cost-scale: 1.0
+  soul_speed:
+    max-level: 5
+    base-cost: 4.0
+    cost-scale: 1.20
+  swift_sneak:
+    max-level: 5
+    base-cost: 4.0
+    cost-scale: 1.20
+  # Weapons
+  sharpness:
+    max-level: 10
+    base-cost: 5.0
+    cost-scale: 1.15
+  smite:
+    max-level: 10
+    base-cost: 4.0
+    cost-scale: 1.15
+  bane_of_arthropods:
+    max-level: 10
+    base-cost: 4.0
+    cost-scale: 1.15
+  knockback:
+    max-level: 5
+    base-cost: 3.0
+    cost-scale: 1.15
+  fire_aspect:
+    max-level: 5
+    base-cost: 4.0
+    cost-scale: 1.20
+  looting:
+    max-level: 5
+    base-cost: 6.0
+    cost-scale: 1.25
+  sweeping_edge:
+    max-level: 5
+    base-cost: 5.0
+    cost-scale: 1.20
+  # Tools
+  efficiency:
+    max-level: 10
+    base-cost: 4.0
+    cost-scale: 1.15
+  silk_touch:
+    max-level: 1
+    base-cost: 6.0
+    cost-scale: 1.0
+  unbreaking:
+    max-level: 10
+    base-cost: 3.0
+    cost-scale: 1.15
+  fortune:
+    max-level: 5
+    base-cost: 6.0
+    cost-scale: 1.25
+  # Bows & Crossbows
+  power:
+    max-level: 10
+    base-cost: 5.0
+    cost-scale: 1.15
+  punch:
+    max-level: 5
+    base-cost: 4.0
+    cost-scale: 1.20
+  flame:
+    max-level: 1
+    base-cost: 5.0
+    cost-scale: 1.0
+  infinity:
+    max-level: 1
+    base-cost: 7.0
+    cost-scale: 1.0
+  multishot:
+    max-level: 1
+    base-cost: 5.0
+    cost-scale: 1.0
+  quick_charge:
+    max-level: 5
+    base-cost: 4.0
+    cost-scale: 1.15
+  piercing:
+    max-level: 5
+    base-cost: 4.0
+    cost-scale: 1.15
+  # Tridents
+  channeling:
+    max-level: 1
+    base-cost: 4.0
+    cost-scale: 1.0
+  loyalty:
+    max-level: 5
+    base-cost: 4.0
+    cost-scale: 1.10
+  impaling:
+    max-level: 10
+    base-cost: 4.0
+    cost-scale: 1.15
+  riptide:
+    max-level: 5
+    base-cost: 5.0
+    cost-scale: 1.15
+  # Fishing Rod
+  luck_of_the_sea:
+    max-level: 5
+    base-cost: 4.0
+    cost-scale: 1.10
+  lure:
+    max-level: 5
+    base-cost: 4.0
+    cost-scale: 1.10
+  # Misc
+  mending:
+    max-level: 1
+    base-cost: 8.0
+    cost-scale: 1.0
+  vanishing_curse:
+    max-level: 1
+    base-cost: 1.0
+    cost-scale: 1.0
+
+# Messages / Chat
+messages:
+  no-permission: "&cYou do not have permission to use this command."
+  upgrade-success: "&aYour tool has been upgraded!"
