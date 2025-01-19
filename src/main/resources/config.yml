@@ -489,7 +489,3 @@ enchants:
           currency-cost: 150
           level-scale: 0.0  # No scaling effect
 
-# Messages / Chat
-messages:
-  no-permission: "&cYou do not have permission to use this command."
-  upgrade-success: "&aYour tool has been upgraded!"

@@ -166,7 +166,7 @@ public class UpgradeCommand implements CommandExecutor, TabExecutor {
             "projectile_protection", "respiration", "aqua_affinity", "thorns",
             "depth_strider", "frost_walker", "binding_curse", "soul_speed",
             "swift_sneak", "sharpness", "smite", "bane_of_arthropods",
-            "knockback", "fire_aspect", "looting", "sweeping",
+            "knockback", "fire_aspect", "looting", "sweeping", "sweeping_edge",
             "efficiency", "silk_touch", "unbreaking", "fortune",
             "power", "punch", "flame", "infinity", "multishot",
             "quick_charge", "piercing", "channeling", "loyalty",
@@ -181,20 +181,19 @@ public class UpgradeCommand implements CommandExecutor, TabExecutor {
             case "blast_protection" -> Enchantment.PROTECTION_EXPLOSIONS;
             case "projectile_protection" -> Enchantment.PROTECTION_PROJECTILE;
             case "respiration" -> Enchantment.OXYGEN;
-            case "aqua_affinity", "water_worker" -> Enchantment.WATER_WORKER;
+            case "aqua_affinity" -> Enchantment.WATER_WORKER;
             case "thorns" -> Enchantment.THORNS;
             case "depth_strider" -> Enchantment.DEPTH_STRIDER;
             case "frost_walker" -> Enchantment.FROST_WALKER;
             case "binding_curse" -> Enchantment.BINDING_CURSE;
             case "soul_speed" -> Enchantment.SOUL_SPEED;
-            case "swift_sneak" -> Enchantment.SWIFT_SNEAK;
             case "sharpness" -> Enchantment.DAMAGE_ALL;
             case "smite" -> Enchantment.DAMAGE_UNDEAD;
-            case "bane_of_arthropods", "arthropods" -> Enchantment.DAMAGE_ARTHROPODS;
+            case "bane_of_arthropods" -> Enchantment.DAMAGE_ARTHROPODS;
             case "knockback" -> Enchantment.KNOCKBACK;
             case "fire_aspect" -> Enchantment.FIRE_ASPECT;
             case "looting" -> Enchantment.LOOT_BONUS_MOBS;
-            case "sweeping", "sweeping_edge" -> Enchantment.SWEEPING_EDGE;
+            case "sweeping_edge" -> Enchantment.SWEEPING_EDGE;
             case "efficiency" -> Enchantment.DIG_SPEED;
             case "silk_touch" -> Enchantment.SILK_TOUCH;
             case "unbreaking" -> Enchantment.DURABILITY;
@@ -210,35 +209,70 @@ public class UpgradeCommand implements CommandExecutor, TabExecutor {
             case "loyalty" -> Enchantment.LOYALTY;
             case "impaling" -> Enchantment.IMPALING;
             case "riptide" -> Enchantment.RIPTIDE;
-            case "luck", "luck_of_the_sea" -> Enchantment.LUCK;
+            case "luck_of_the_sea" -> Enchantment.LUCK;
             case "lure" -> Enchantment.LURE;
             case "mending" -> Enchantment.MENDING;
             case "vanishing_curse" -> Enchantment.VANISHING_CURSE;
-
-            default -> null;
+            default -> null; // Return null if no match
         };
     }
-
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender,
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender,
                                                 @NotNull Command command,
                                                 @NotNull String alias,
                                                 @NotNull String[] args) {
-        // Provide enchantment suggestions for the first argument
+        // Add default enchantments if missing
+        addMissingEnchantmentsToConfig();
+
         if (args.length == 1) {
-            return plugin.getConfig().getConfigurationSection("enchants").getKeys(false).stream().toList();
+            ConfigurationSection enchantsSection = plugin.getConfig().getConfigurationSection("enchants");
+            if (enchantsSection != null) {
+                return enchantsSection.getKeys(false).stream().toList();
+            }
+            plugin.getLogger().warning("Enchants section is null in configuration.");
+            return List.of("protection", "sharpness"); // Default suggestions
         }
 
-        // Provide level suggestions for the second argument
         if (args.length == 2) {
             String enchantName = args[0].toLowerCase();
             ConfigurationSection enchantConfig = plugin.getConfig().getConfigurationSection("enchants." + enchantName);
             if (enchantConfig != null && enchantConfig.contains("levels")) {
-                return enchantConfig.getConfigurationSection("levels").getKeys(false).stream().toList();
+                ConfigurationSection levelsSection = enchantConfig.getConfigurationSection("levels");
+                if (levelsSection != null) {
+                    return levelsSection.getKeys(false).stream().toList();
+                }
+                plugin.getLogger().warning("Levels section is null for enchantment: " + enchantName);
             }
         }
 
-        // Return an empty list for other cases
         return Collections.emptyList();
+    }
+
+    private void addMissingEnchantmentsToConfig() {
+        ConfigurationSection enchantsSection = plugin.getConfig().getConfigurationSection("enchants");
+        if (enchantsSection == null) {
+            enchantsSection = plugin.getConfig().createSection("enchants");
+        }
+
+        for (String enchantName : ENCHANTMENTS) {
+            if (!enchantsSection.contains(enchantName)) {
+                plugin.getLogger().info("Adding missing enchantment to config: " + enchantName);
+
+                ConfigurationSection enchantConfig = enchantsSection.createSection(enchantName);
+                enchantConfig.set("enabled", true);
+                enchantConfig.set("use-xp", true);
+                enchantConfig.set("use-currency", true);
+
+                ConfigurationSection levelsSection = enchantConfig.createSection("levels");
+                ConfigurationSection level1 = levelsSection.createSection("1");
+                level1.set("xp-cost", 10);
+                level1.set("currency-cost", 50);
+
+                ConfigurationSection level2 = levelsSection.createSection("2");
+                level2.set("xp-cost", 20);
+                level2.set("currency-cost", 100);
+            }
+        }
+        plugin.saveConfig();
     }
 }
