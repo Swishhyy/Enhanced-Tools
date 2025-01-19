@@ -1,0 +1,19 @@
+name: EnhancedTools
+version: '0.1'
+main: me.swishhyy.enhancedtools.EnhancedTools
+api-version: '1.20'
+
+commands:
+  upgrade:
+    description: "Upgrade your tool via currency."
+    usage: "/upgrade"
+    aliases: [upg]
+    permission: "enhancedtools.command.upgrade"
+    permission-message: "You do not have permission to use /upgrade."
+
+  enhancedtools:
+    description: "Main EnhancedTools command. Use /enhancedtools reload."
+    usage: "/enhancedtools [reload]"
+    aliases: []
+    permission: "enhancedtools.command.admin"
+    permission-message: "You do not have permission to use this command."

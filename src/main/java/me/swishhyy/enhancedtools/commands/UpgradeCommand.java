@@ -109,57 +109,100 @@ public class UpgradeCommand implements CommandExecutor, TabExecutor {
             return true;
         }
 
-        ConfigurationSection levelConfig = enchantConfig.getConfigurationSection("levels." + level);
-        if (levelConfig == null) {
-            player.sendMessage(plugin.getMessage("commands.enhancedtools.invalid-upgrade-level", "{plugin_name} §7- Invalid level §c{level} §7for enchantment §c{enchant}§7.")
+// Check if the "levels" section exists
+        ConfigurationSection levelsSection = enchantConfig.getConfigurationSection("levels");
+        if (levelsSection == null) {
+            player.sendMessage(plugin.getMessage("commands.enhancedtools.missing-upgrade-levels",
+                            "{plugin_name} §7- The enchantment §c{enchant} §7has no upgrade levels defined.")
                     .replace("{plugin_name}", EnhancedTools.getFormattedPluginName())
-                    .replace("{level}", String.valueOf(level))
                     .replace("{enchant}", enchantName));
             return true;
         }
 
-        int xpCost = levelConfig.getInt("xp-cost");
-        double currencyCost = levelConfig.getDouble("currency-cost");
+// Check if the specific level exists
+        ConfigurationSection levelSection = levelsSection.getConfigurationSection(String.valueOf(level));
+        if (levelSection == null) {
+            player.sendMessage(plugin.getMessage("commands.enhancedtools.invalid-upgrade-level",
+                            "{plugin_name} §7- The level §c{level} §7is not configured for enchantment §c{enchant}§7.")
+                    .replace("{plugin_name}", EnhancedTools.getFormattedPluginName())
+                    .replace("{level}", String.valueOf(level))
+                    .replace("{enchant}", enchantName));
+            plugin.getLogger().warning("Level " + level + " not found for enchantment: " + enchantName);
+            return true;
+        }
 
+    // Extract XP and currency costs
+        int xpCost = levelSection.getInt("xp-cost");
+        double currencyCost = levelSection.getDouble("currency-cost");
+
+    // Check and deduct costs (use Vault or XP)
         boolean useVault = plugin.getConfig().getBoolean("use-vault", false);
         if (useVault) {
             Economy economy = plugin.getEconomy();
             if (economy.getBalance(player) < currencyCost) {
-                player.sendMessage(plugin.getMessage("commands.enhancedtools.not-enough-currency", "{plugin_name} §7- You do not have enough currency (§6{cost}§7) for this upgrade.")
+                player.sendMessage(plugin.getMessage("commands.enhancedtools.not-enough-currency",
+                                "{plugin_name} §7- You do not have enough currency (§6{cost}§7) for this upgrade.")
                         .replace("{plugin_name}", EnhancedTools.getFormattedPluginName())
                         .replace("{cost}", String.valueOf(currencyCost)));
                 return true;
             }
 
             economy.withdrawPlayer(player, currencyCost);
-            player.sendMessage(plugin.getMessage("commands.enhancedtools.currency-deducted", "{plugin_name} §7- Deducted §6{cost} currency§7 from your balance.")
+            player.sendMessage(plugin.getMessage("commands.enhancedtools.currency-deducted",
+                            "{plugin_name} §7- Deducted §6{cost} currency§7 from your balance.")
                     .replace("{plugin_name}", EnhancedTools.getFormattedPluginName())
                     .replace("{cost}", String.valueOf(currencyCost)));
         } else {
             if (player.getLevel() < xpCost) {
-                player.sendMessage(plugin.getMessage("commands.enhancedtools.not-enough-xp", "{plugin_name} §7- You do not have enough XP levels (§b{cost}§7).")
+                player.sendMessage(plugin.getMessage("commands.enhancedtools.not-enough-xp",
+                                "{plugin_name} §7- You do not have enough XP levels (§b{cost}§7).")
                         .replace("{plugin_name}", EnhancedTools.getFormattedPluginName())
                         .replace("{cost}", String.valueOf(xpCost)));
                 return true;
             }
             player.setLevel(player.getLevel() - xpCost);
-            player.sendMessage(plugin.getMessage("commands.enhancedtools.xp-deducted", "{plugin_name} §7- Deducted §b{cost} XP levels§7.")
+            player.sendMessage(plugin.getMessage("commands.enhancedtools.xp-deducted",
+                            "{plugin_name} §7- Deducted §b{cost} XP levels§7.")
                     .replace("{plugin_name}", EnhancedTools.getFormattedPluginName())
                     .replace("{cost}", String.valueOf(xpCost)));
         }
 
+    // Apply the enchantment
         ItemMeta meta = itemInHand.getItemMeta();
         meta.addEnchant(enchantment, level, true);
         itemInHand.setItemMeta(meta);
 
         player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_USE, 1.0f, 1.0f);
-        player.sendMessage(plugin.getMessage("commands.enhancedtools.upgrade-success", "{plugin_name} §aYour item has been upgraded to §e{enchant} {level}§a!")
+        player.sendMessage(plugin.getMessage("commands.enhancedtools.upgrade-success",
+                        "{plugin_name} §aYour item has been upgraded to §e{enchant} {level}§a!")
                 .replace("{plugin_name}", EnhancedTools.getFormattedPluginName())
                 .replace("{enchant}", enchantName)
                 .replace("{level}", String.valueOf(level)));
 
         return true;
     }
+
+    private void ensureLevelExists(String enchantName, int level) {
+        ConfigurationSection enchantsSection = plugin.getConfig().getConfigurationSection("enchants");
+        if (enchantsSection == null) return;
+
+        ConfigurationSection enchantConfig = enchantsSection.getConfigurationSection(enchantName);
+        if (enchantConfig == null) return;
+
+        ConfigurationSection levelsSection = enchantConfig.getConfigurationSection("levels");
+        if (levelsSection == null) {
+            levelsSection = enchantConfig.createSection("levels");
+        }
+
+        if (!levelsSection.contains(String.valueOf(level))) {
+            plugin.getLogger().info("Adding missing level " + level + " for enchantment: " + enchantName);
+            ConfigurationSection levelSection = levelsSection.createSection(String.valueOf(level));
+            levelSection.set("xp-cost", 10 * level); // Default scaling
+            levelSection.set("currency-cost", 50 * level); // Default scaling
+            plugin.saveConfig();
+        }
+    }
+
 
     private static final List<String> ENCHANTMENTS = List.of(
             "protection", "fire_protection", "feather_falling", "blast_protection",

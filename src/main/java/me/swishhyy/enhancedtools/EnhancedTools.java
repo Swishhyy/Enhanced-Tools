@@ -3,10 +3,13 @@ package me.swishhyy.enhancedtools;
 import me.swishhyy.enhancedtools.commands.EnhancedToolsCommand;
 import me.swishhyy.enhancedtools.commands.UpgradeCommand;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,6 +71,20 @@ public final class EnhancedTools extends JavaPlugin {
     public static String getFormattedPluginName() {
         return "§5§lEnhanced§e§lTools";
     }
+
+    @Override
+    public boolean onCommand(@NotNull CommandSender sender,
+                             @NotNull Command command,
+                             @NotNull String label,
+                             @NotNull String[] args) {
+        if (label.equalsIgnoreCase("reloadconfig")) {
+            this.reloadConfig();
+            sender.sendMessage("Configuration reloaded successfully!");
+            return true;
+        }
+        return false;
+    }
+
 
     private boolean setupEconomy() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {

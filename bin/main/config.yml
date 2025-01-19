@@ -1,0 +1,491 @@
+# -------------------------------------------------------------------
+# EnhancedTools Config
+# -------------------------------------------------------------------
+# If true, your plugin will attempt to use Vault-based economy
+# (i.e., currency) for upgrades. If false, you might use XP instead.
+use-vault: false
+
+# If true, print extra debug/logging info in the console
+enable-logging: true
+
+# Per-enchantment configuration
+#  - max-level  = The maximum level you will allow (ignoring vanilla caps)
+#  - base-cost  = The starting cost for upgrading to level 1 (or each increment)
+#  - cost-scale = A multiplier applied to the cost for higher levels.
+#                 If cost-scale = 1.2, level 2 upgrade might cost baseCost * 1.2,
+enchants:
+  protection:
+    enabled: true
+    use-xp: true
+    use-currency: true
+    levels:
+      1:
+        xp-cost: 10
+        currency-cost: 50
+        level-scale: 1.0  # +1% defense for level 1
+      2:
+        xp-cost: 20
+        currency-cost: 100
+        level-scale: 3.0  # +3% defense for level 2
+      3:
+        xp-cost: 30
+        currency-cost: 150
+        level-scale: 5.0  # +5% defense for level 3
+  fire_protection:
+    enabled: true
+    use-xp: true
+    use-currency: true
+    levels:
+      1:
+        xp-cost: 15
+        currency-cost: 75
+        level-scale: 1.0  # +1% fire resistance
+      2:
+        xp-cost: 30
+        currency-cost: 150
+        level-scale: 3.0  # +3% fire resistance
+      3:
+        xp-cost: 45
+        currency-cost: 225
+        level-scale: 5.0  # +5% fire resistance
+  feather_falling:
+    enabled: true
+    use-xp: true
+    use-currency: true
+    levels:
+      1:
+        xp-cost: 20
+        currency-cost: 80
+        level-scale: 1.0  # +1% fall damage reduction
+      2:
+        xp-cost: 40
+        currency-cost: 160
+        level-scale: 3.0  # +3% fall damage reduction
+      3:
+        xp-cost: 60
+        currency-cost: 240
+        level-scale: 5.0  # +5% fall damage reduction
+  blast_protection:
+    enabled: true
+    use-xp: true
+    use-currency: true
+    levels:
+      1:
+        xp-cost: 12
+        currency-cost: 60
+        level-scale: 1.0  # +1% explosion resistance
+      2:
+        xp-cost: 24
+        currency-cost: 120
+        level-scale: 3.0  # +3% explosion resistance
+      3:
+        xp-cost: 36
+        currency-cost: 180
+        level-scale: 5.0  # +5% explosion resistance
+  projectile_protection:
+    enabled: true
+    use-xp: true
+    use-currency: true
+    levels:
+      1:
+        xp-cost: 10
+        currency-cost: 50
+        level-scale: 1.0  # +1% projectile resistance
+      2:
+        xp-cost: 20
+        currency-cost: 100
+        level-scale: 3.0  # +3% projectile resistance
+      3:
+        xp-cost: 30
+        currency-cost: 150
+        level-scale: 5.0  # +5% projectile resistance
+  respiration:
+    enabled: true
+    use-xp: true
+    use-currency: true
+    levels:
+      1:
+        xp-cost: 20
+        currency-cost: 80
+        level-scale: 2.0  # +2% underwater breathing duration
+      2:
+        xp-cost: 40
+        currency-cost: 160
+        level-scale: 5.0  # +5% underwater breathing duration
+  aqua_affinity:
+    enabled: true
+    use-xp: true
+    use-currency: true
+    levels:
+      1:
+        xp-cost: 15
+        currency-cost: 60
+        level-scale: 10.0  # +10% underwater mining speed
+  thorns:
+    enabled: true
+    use-xp: true
+    use-currency: true
+    levels:
+      1:
+        xp-cost: 25
+        currency-cost: 100
+        level-scale: 2.0  # +2% damage reflection
+      2:
+        xp-cost: 50
+        currency-cost: 200
+        level-scale: 5.0  # +5% damage reflection
+  depth_strider:
+    enabled: true
+    use-xp: true
+    use-currency: true
+    levels:
+      1:
+        xp-cost: 20
+        currency-cost: 80
+        level-scale: 15.0  # +15% underwater movement speed
+      2:
+        xp-cost: 40
+        currency-cost: 160
+        level-scale: 25.0  # +25% underwater movement speed
+  frost_walker:
+    enabled: true
+    use-xp: true
+    use-currency: true
+    levels:
+      1:
+        xp-cost: 18
+        currency-cost: 75
+        level-scale: 5.0  # +5% frost path durability
+      2:
+        xp-cost: 36
+        currency-cost: 150
+        level-scale: 10.0  # +10% frost path durability
+  sharpness:
+    enabled: true
+    use-xp: true
+    use-currency: true
+    levels:
+      1:
+        xp-cost: 15
+        currency-cost: 75
+        level-scale: 1.0  # +1% attack damage
+      2:
+        xp-cost: 30
+        currency-cost: 150
+        level-scale: 3.0  # +3% attack damage
+      3:
+        xp-cost: 45
+        currency-cost: 225
+        level-scale: 5.0  # +5% attack damage
+  smite:
+    enabled: true
+    use-xp: true
+    use-currency: true
+    levels:
+      1:
+        xp-cost: 12
+        currency-cost: 60
+        level-scale: 1.0  # +1% damage to undead
+      2:
+        xp-cost: 24
+        currency-cost: 120
+        level-scale: 3.0  # +3% damage to undead
+      3:
+        xp-cost: 36
+        currency-cost: 180
+        level-scale: 5.0  # +5% damage to undead
+
+  enchants:
+    bane_of_arthropods:
+      enabled: true
+      use-xp: true
+      use-currency: true
+      levels:
+        1:
+          xp-cost: 15
+          currency-cost: 75
+          level-scale: 1.0  # +1% damage to arthropods
+        2:
+          xp-cost: 30
+          currency-cost: 150
+          level-scale: 3.0  # +3% damage to arthropods
+        3:
+          xp-cost: 45
+          currency-cost: 225
+          level-scale: 5.0  # +5% damage to arthropods
+
+    knockback:
+      enabled: true
+      use-xp: true
+      use-currency: true
+      levels:
+        1:
+          xp-cost: 10
+          currency-cost: 50
+          level-scale: 2.0  # +2% knockback distance
+        2:
+          xp-cost: 20
+          currency-cost: 100
+          level-scale: 5.0  # +5% knockback distance
+    fire_aspect:
+      enabled: true
+      use-xp: true
+      use-currency: true
+      levels:
+        1:
+          xp-cost: 20
+          currency-cost: 100
+          level-scale: 3.0  # +3% fire duration
+        2:
+          xp-cost: 40
+          currency-cost: 200
+          level-scale: 6.0  # +6% fire duration
+    looting:
+      enabled: true
+      use-xp: true
+      use-currency: true
+      levels:
+        1:
+          xp-cost: 25
+          currency-cost: 125
+          level-scale: 1.0  # +1% chance to increase drops
+        2:
+          xp-cost: 50
+          currency-cost: 250
+          level-scale: 3.0  # +3% chance to increase drops
+    sweeping_edge:
+      enabled: true
+      use-xp: true
+      use-currency: true
+      levels:
+        1:
+          xp-cost: 20
+          currency-cost: 100
+          level-scale: 2.0  # +2% sweeping damage
+        2:
+          xp-cost: 40
+          currency-cost: 200
+          level-scale: 5.0  # +5% sweeping damage
+    efficiency:
+      enabled: true
+      use-xp: true
+      use-currency: true
+      levels:
+        1:
+          xp-cost: 10
+          currency-cost: 50
+          level-scale: 2.0  # +2% mining speed
+        2:
+          xp-cost: 20
+          currency-cost: 100
+          level-scale: 5.0  # +5% mining speed
+    unbreaking:
+      enabled: true
+      use-xp: true
+      use-currency: true
+      levels:
+        1:
+          xp-cost: 10
+          currency-cost: 50
+          level-scale: 2.0  # +2% durability chance
+        2:
+          xp-cost: 20
+          currency-cost: 100
+          level-scale: 5.0  # +5% durability chance
+    fortune:
+      enabled: true
+      use-xp: true
+      use-currency: true
+      levels:
+        1:
+          xp-cost: 25
+          currency-cost: 125
+          level-scale: 1.0  # +1% chance to increase drops
+        2:
+          xp-cost: 50
+          currency-cost: 250
+          level-scale: 3.0  # +3% chance to increase drops
+    power:
+      enabled: true
+      use-xp: true
+      use-currency: true
+      levels:
+        1:
+          xp-cost: 15
+          currency-cost: 75
+          level-scale: 2.0  # +2% bow damage
+        2:
+          xp-cost: 30
+          currency-cost: 150
+          level-scale: 5.0  # +5% bow damage
+    punch:
+      enabled: true
+      use-xp: true
+      use-currency: true
+      levels:
+        1:
+          xp-cost: 20
+          currency-cost: 100
+          level-scale: 3.0  # +3% knockback
+        2:
+          xp-cost: 40
+          currency-cost: 200
+          level-scale: 6.0  # +6% knockback
+    quick_charge:
+      enabled: true
+      use-xp: true
+      use-currency: true
+      levels:
+        1:
+          xp-cost: 15
+          currency-cost: 75
+          level-scale: 2.0  # +2% faster reload speed
+        2:
+          xp-cost: 30
+          currency-cost: 150
+          level-scale: 5.0  # +5% faster reload speed
+    piercing:
+      enabled: true
+      use-xp: true
+      use-currency: true
+      levels:
+        1:
+          xp-cost: 15
+          currency-cost: 75
+          level-scale: 2.0  # +2% arrow penetration
+        2:
+          xp-cost: 30
+          currency-cost: 150
+          level-scale: 5.0  # +5% arrow penetration
+    loyalty:
+      enabled: true
+      use-xp: true
+      use-currency: true
+      levels:
+        1:
+          xp-cost: 20
+          currency-cost: 100
+          level-scale: 3.0  # +3% faster return speed
+        2:
+          xp-cost: 40
+          currency-cost: 200
+          level-scale: 6.0  # +6% faster return speed
+    impaling:
+      enabled: true
+      use-xp: true
+      use-currency: true
+      levels:
+        1:
+          xp-cost: 15
+          currency-cost: 75
+          level-scale: 2.0  # +2% extra damage to sea creatures
+        2:
+          xp-cost: 30
+          currency-cost: 150
+          level-scale: 5.0  # +5% extra damage to sea creatures
+    riptide:
+      enabled: true
+      use-xp: true
+      use-currency: true
+      levels:
+        1:
+          xp-cost: 25
+          currency-cost: 125
+          level-scale: 3.0  # +3% riptide launch speed
+        2:
+          xp-cost: 50
+          currency-cost: 250
+          level-scale: 6.0  # +6% riptide launch speed
+    luck_of_the_sea:
+      enabled: true
+      use-xp: true
+      use-currency: true
+      levels:
+        1:
+          xp-cost: 15
+          currency-cost: 75
+          level-scale: 2.0  # +2% better loot chances
+        2:
+          xp-cost: 30
+          currency-cost: 150
+          level-scale: 5.0  # +5% better loot chances
+    lure:
+      enabled: true
+      use-xp: true
+      use-currency: true
+      levels:
+        1:
+          xp-cost: 15
+          currency-cost: 75
+          level-scale: 2.0  # +2% faster catch rates
+        2:
+          xp-cost: 30
+          currency-cost: 150
+          level-scale: 5.0  # +5% faster catch rates
+
+    # Do not scale this itll probably break the plugin // Unscalabe Enchants
+    mending:
+      enabled: true
+      use-xp: true
+      use-currency: true
+      levels:
+        1:
+          xp-cost: 50
+          currency-cost: 250
+          level-scale: 0.0  # No scaling effect
+
+    vanishing_curse:
+      enabled: true
+      use-xp: true
+      use-currency: true
+      levels:
+        1:
+          xp-cost: 10
+          currency-cost: 50
+          level-scale: 0.0  # No scaling effect
+    channeling:
+      enabled: true
+      use-xp: true
+      use-currency: true
+      levels:
+        1:
+          xp-cost: 30
+          currency-cost: 150
+          level-scale: 0.0  # No scaling effect
+    infinity:
+      enabled: true
+      use-xp: true
+      use-currency: true
+      levels:
+        1:
+          xp-cost: 50
+          currency-cost: 250
+          level-scale: 0.0  # No scaling effect
+    silk_touch:
+      enabled: true
+      use-xp: true
+      use-currency: true
+      levels:
+        1:
+          xp-cost: 30
+          currency-cost: 150
+          level-scale: 0.0  # No scaling effect
+    multishot:
+      enabled: true
+      use-xp: true
+      use-currency: true
+      levels:
+        1:
+          xp-cost: 30
+          currency-cost: 150
+          level-scale: 0.0  # No scaling effect
+    flame:
+      enabled: true
+      use-xp: true
+      use-currency: true
+      levels:
+        1:
+          xp-cost: 30
+          currency-cost: 150
+          level-scale: 0.0  # No scaling effect
+
