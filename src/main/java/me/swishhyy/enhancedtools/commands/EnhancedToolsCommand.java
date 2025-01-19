@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class EnhancedToolsCommand implements CommandExecutor, TabExecutor {
 
@@ -58,7 +59,7 @@ public class EnhancedToolsCommand implements CommandExecutor, TabExecutor {
                                                 @NotNull String[] args) {
         // Provide suggestions for the first argument
         if (args.length == 1) {
-            return List.of("reload").stream()
+            return Stream.of("reload")
                     .filter(subcommand -> subcommand.startsWith(args[0].toLowerCase()))
                     .collect(Collectors.toList());
         }
